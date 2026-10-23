@@ -16,7 +16,10 @@ class User(AbstractUser):
         AGENT = "agent", "Support agent"
 
     company = models.ForeignKey(
-        Company, null=True, blank=True,
-        on_delete=models.PROTECT, related_name="users",
+        Company,
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        related_name="users",
     )
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.CUSTOMER)

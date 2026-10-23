@@ -5,9 +5,8 @@ All environment-specific values (secrets, debug flag, database) are read
 from environment variables / the .env file via django-environ.
 """
 
-from pathlib import Path
-
 from datetime import timedelta
+from pathlib import Path
 
 import environ
 

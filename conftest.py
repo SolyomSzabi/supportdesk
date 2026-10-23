@@ -32,9 +32,7 @@ def lisa(sunrise):
 
 @pytest.fixture
 def agent(db):
-    return User.objects.create_user(
-        username="tom", password="pass12345", role=User.Role.AGENT
-    )
+    return User.objects.create_user(username="tom", password="pass12345", role=User.Role.AGENT)
 
 
 @pytest.fixture

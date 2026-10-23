@@ -21,11 +21,18 @@ class Ticket(models.Model):
         ACCOUNT = "account", "Account"
         OTHER = "other", "Other"
 
-    company = models.ForeignKey("accounts.Company", on_delete=models.CASCADE, related_name="tickets")
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="created_tickets")
+    company = models.ForeignKey(
+        "accounts.Company", on_delete=models.CASCADE, related_name="tickets"
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="created_tickets"
+    )
     assigned_to = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, blank=True,
-        on_delete=models.SET_NULL, related_name="assigned_tickets",
+        settings.AUTH_USER_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="assigned_tickets",
     )
     title = models.CharField(max_length=200)
     description = models.TextField()

@@ -4,7 +4,6 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from accounts.views import me
-
 from tickets.views import TicketViewSet
 
 router = DefaultRouter()

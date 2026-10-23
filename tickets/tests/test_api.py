@@ -114,7 +114,9 @@ def test_reply_author_is_the_logged_in_user(api_client, anna, make_ticket):
     ticket = make_ticket(anna)
     api_client.force_authenticate(anna)
 
-    response = api_client.post(f"{ticket_url(ticket)}reply/", {"body": "Any update?"}, format="json")
+    response = api_client.post(
+        f"{ticket_url(ticket)}reply/", {"body": "Any update?"}, format="json"
+    )
 
     assert response.status_code == 201
     assert response.data["author"] == "anna"

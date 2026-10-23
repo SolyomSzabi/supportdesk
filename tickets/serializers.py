@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Ticket, Reply
+
+from .models import Reply, Ticket
 
 
 class ReplySerializer(serializers.ModelSerializer):
@@ -18,9 +19,19 @@ class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = [
-            "id", "title", "description", "status", "priority", "category",
-            "ai_summary", "company", "created_by", "assigned_to",
-            "created_at", "updated_at", "replies",
+            "id",
+            "title",
+            "description",
+            "status",
+            "priority",
+            "category",
+            "ai_summary",
+            "company",
+            "created_by",
+            "assigned_to",
+            "created_at",
+            "updated_at",
+            "replies",
         ]
         read_only_fields = ["ai_summary"]
 

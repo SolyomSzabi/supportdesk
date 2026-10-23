@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Ticket, Reply
+
+from .models import Reply, Ticket
 
 
 class ReplyInline(admin.TabularInline):
