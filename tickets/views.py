@@ -29,6 +29,13 @@ class TicketViewSet(viewsets.ModelViewSet):
     search_fields = ["title", "description"]
     ordering_fields = ["created_at", "priority_rank"]
 
+    def get_permissions(self):
+        # Customers may create and read tickets; only agents may change or delete them,
+        # otherwise a customer could PATCH their own ticket to "urgent" or "resolved".
+        if self.action in ("update", "partial_update", "destroy"):
+            return [IsAuthenticated(), IsAgent()]
+        return super().get_permissions()
+
     def get_queryset(self):
         qs = (
             Ticket.objects.annotate(priority_rank=PRIORITY_RANK)
