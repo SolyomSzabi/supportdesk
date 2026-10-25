@@ -4,3 +4,5 @@ __pycache__/
 *.pyc
 db.sqlite3
 data_utf8.json
+staticfiles/
+env.yaml
