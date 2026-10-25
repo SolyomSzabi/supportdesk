@@ -6,9 +6,11 @@ class Company(models.Model):
     name = models.CharField(max_length=200, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        verbose_name_plural = "companies"
+
     def __str__(self):
         return self.name
-
 
 class User(AbstractUser):
     class Role(models.TextChoices):
