@@ -1,12 +1,14 @@
 from django.db.models import Case, IntegerField, Value, When
 from rest_framework import serializers, status, viewsets
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from accounts.models import User
 
 from . import ai
 from .models import Ticket
+from .permissions import IsAgent
 from .serializers import ReplySerializer, TicketSerializer
 
 # Priority is stored as text, so ordering by it would be alphabetical.
@@ -43,16 +45,7 @@ class TicketViewSet(viewsets.ModelViewSet):
         if user.company is None:
             raise serializers.ValidationError("Only customer accounts can create tickets.")
         ticket = serializer.save(created_by=user, company=user.company)
-        self._apply_ai_triage(ticket)
-
-    def _apply_ai_triage(self, ticket):
-        result = ai.triage_ticket(ticket.title, ticket.description)
-        if result is None:
-            return
-        ticket.category = result.category
-        ticket.priority = result.priority
-        ticket.ai_summary = result.summary
-        ticket.save(update_fields=["category", "priority", "ai_summary", "updated_at"])
+        ai.apply_triage(ticket)
 
     @action(detail=True, methods=["post"])
     def reply(self, request, pk=None):
@@ -61,3 +54,20 @@ class TicketViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save(ticket=ticket, author=request.user)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="suggest-reply",
+        permission_classes=[IsAuthenticated, IsAgent],
+    )
+    def suggest_reply(self, request, pk=None):
+        """Return an AI-written draft. It is NOT saved: the agent edits and sends it."""
+        ticket = self.get_object()
+        draft = ai.suggest_reply(ticket)
+        if draft is None:
+            return Response(
+                {"detail": "AI suggestions are currently unavailable. Please try again later."},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        return Response({"draft": draft})
