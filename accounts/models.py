@@ -12,6 +12,7 @@ class Company(models.Model):
     def __str__(self):
         return self.name
 
+
 class User(AbstractUser):
     class Role(models.TextChoices):
         CUSTOMER = "customer", "Customer"
