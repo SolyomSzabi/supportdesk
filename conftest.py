@@ -5,6 +5,12 @@ from accounts.models import Company, User
 from tickets.models import Ticket
 
 
+@pytest.fixture(autouse=True)
+def disable_real_ai(settings):
+    """Tests must never call the real Gemini API; individual tests mock it when needed."""
+    settings.GEMINI_API_KEY = ""
+
+
 @pytest.fixture
 def api_client():
     return APIClient()

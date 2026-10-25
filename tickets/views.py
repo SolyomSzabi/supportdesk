@@ -5,6 +5,7 @@ from rest_framework.response import Response
 
 from accounts.models import User
 
+from . import ai
 from .models import Ticket
 from .serializers import ReplySerializer, TicketSerializer
 
@@ -41,7 +42,17 @@ class TicketViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if user.company is None:
             raise serializers.ValidationError("Only customer accounts can create tickets.")
-        serializer.save(created_by=user, company=user.company)
+        ticket = serializer.save(created_by=user, company=user.company)
+        self._apply_ai_triage(ticket)
+
+    def _apply_ai_triage(self, ticket):
+        result = ai.triage_ticket(ticket.title, ticket.description)
+        if result is None:
+            return
+        ticket.category = result.category
+        ticket.priority = result.priority
+        ticket.ai_summary = result.summary
+        ticket.save(update_fields=["category", "priority", "ai_summary", "updated_at"])
 
     @action(detail=True, methods=["post"])
     def reply(self, request, pk=None):
